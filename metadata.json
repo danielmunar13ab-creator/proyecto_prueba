@@ -1,0 +1,5 @@
+{
+  "name": "GoFood",
+  "description": "Una aplicación web de comida rápida que permite a los usuarios pedir comida a domicilio, hacer reservas y gestionar su carrito de compras. Con opciones de pago modernas como Nequi y códigos QR.",
+  "requestFramePermissions": []
+}

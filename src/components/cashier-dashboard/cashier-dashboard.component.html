@@ -1,0 +1,78 @@
+<div class="space-y-12 animate-fade-in-up">
+  <div class="text-center">
+    <h2 class="text-4xl font-extrabold text-gray-900">Módulo de Cajero</h2>
+    <p class="text-gray-600 mt-3 max-w-lg mx-auto">Gestión de pedidos y pagos.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+    
+    <!-- Pending Orders -->
+    <section class="bg-white p-6 rounded-2xl shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 border-l-4 border-orange-500 pl-4">Pedidos Pendientes</h3>
+      <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+         @for(order of pendingOrders(); track order.id) {
+          <div class="bg-gray-50 p-4 rounded-lg border">
+              <div class="flex justify-between items-start">
+                  <div>
+                      <p class="font-bold text-gray-800">Pedido #{{order.id}}</p>
+                      <p class="text-sm text-gray-500 capitalize">
+                         {{ getOrderTypeLabel(order.type, order.tableId) }}
+                         @if(order.waiterName) {
+                          <span class="text-gray-400 font-normal">- Atendido por {{order.waiterName}}</span>
+                         }
+                      </p>
+                  </div>
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                        [class.bg-yellow-200]="order.status === 'en_preparacion'" [class.text-yellow-800]="order.status === 'en_preparacion'"
+                        [class.bg-green-200]="order.status === 'listo_para_servir'" [class.text-green-800]="order.status === 'listo_para_servir'"
+                        [class.bg-blue-200]="order.status === 'pendiente'" [class.text-blue-800]="order.status === 'pendiente'">
+                    {{ order.status.replace('_', ' ') }}
+                  </span>
+              </div>
+              <ul class="text-sm text-gray-600 mt-2 list-disc list-inside">
+                  @for(item of order.items; track item.product.id) {
+                      <li>{{item.product.name}} x {{item.quantity}}</li>
+                  }
+              </ul>
+              <div class="border-t mt-3 pt-3 flex justify-between items-center">
+                  <p class="font-bold text-lg">{{ order.total | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+                  @if (order.status === 'listo_para_servir') {
+                       <button (click)="completeOrder(order.id)" class="bg-green-500 text-white px-4 py-1.5 rounded-md font-semibold hover:bg-green-600 text-sm transition-colors">
+                          Marcar como Pagado
+                       </button>
+                  }
+              </div>
+          </div>
+         } @empty {
+           <p class="text-center text-gray-500 py-8">No hay pedidos pendientes.</p>
+         }
+      </div>
+    </section>
+
+    <!-- Daily Sales -->
+    <section class="bg-white p-6 rounded-2xl shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 border-l-4 border-green-500 pl-4">Cierre de Caja del Día</h3>
+      <div class="bg-green-100 p-4 rounded-lg text-center mb-4">
+        <p class="text-sm text-green-800 font-semibold">Ventas del Día (Completadas por ti)</p>
+        <p class="text-3xl font-extrabold text-green-900">{{ dailyTotal() | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+      </div>
+      <div class="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+        @for(order of dailyCompletedByCashier(); track order.id) {
+          <div class="bg-gray-50 p-3 rounded-lg border text-sm">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-gray-800">#{{order.id}}</span>
+              <span class="font-bold text-gray-900">{{ order.total | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+            <div class="flex justify-between items-center text-gray-600 mt-1">
+               <span class="capitalize">{{ getOrderTypeLabel(order.type, order.tableId) }} @if(order.waiterName){ - {{order.waiterName}} }</span>
+               <span>{{ order.completedAt | date:'shortTime' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-center text-gray-500 py-8">Aún no has completado ventas hoy.</p>
+        }
+      </div>
+    </section>
+
+  </div>
+</div>

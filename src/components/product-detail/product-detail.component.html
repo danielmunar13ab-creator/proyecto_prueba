@@ -1,0 +1,28 @@
+<div class="fixed inset-0 bg-black bg-opacity-70 z-50 flex justify-center items-center p-4" (click)="closeDetail.emit()">
+  <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full m-4 overflow-hidden animate-fade-in-up" (click)="$event.stopPropagation()">
+    <div class="md:flex">
+      <div class="md:w-1/2">
+        <img [src]="product().imageUrl" [alt]="product().name" class="w-full h-64 md:h-full object-cover">
+      </div>
+      <div class="p-8 md:w-1/2 flex flex-col">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <span class="text-sm font-semibold text-orange-500">{{ product().category | uppercase }}</span>
+            <h2 class="text-4xl font-extrabold text-gray-900 leading-tight">{{ product().name }}</h2>
+          </div>
+          <button (click)="closeDetail.emit()" class="text-gray-400 hover:text-gray-600 transition-colors">
+            <svg class="h-7 w-7" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <p class="text-gray-700 leading-relaxed mb-8 flex-grow">{{ product().longDescription }}</p>
+        <div class="flex justify-between items-center mt-auto">
+          <span class="text-4xl font-extrabold text-gray-900">{{ product().price | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+          <button (click)="addToCart()" class="bg-orange-500 text-white px-8 py-3 rounded-full font-semibold hover:bg-orange-600 transition-all duration-300 flex items-center space-x-2 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+            <span>Agregar</span>
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

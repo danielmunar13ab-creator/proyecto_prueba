@@ -1,0 +1,44 @@
+<div class="min-h-screen flex flex-col">
+  <app-header 
+    (toggleCart)="handleToggleCart()"
+    (showLogin)="handleShowLogin()">
+  </app-header>
+  
+  <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    @if (currentUser(); as user) {
+      @switch (user.role) {
+        @case ('administrador') {
+          <app-admin-dashboard></app-admin-dashboard>
+        }
+        @case ('cajero') {
+          <app-cashier-dashboard></app-cashier-dashboard>
+        }
+        @case ('mesero') {
+          <app-waiter-dashboard></app-waiter-dashboard>
+        }
+        @case ('domiciliario') {
+          <app-delivery-dashboard></app-delivery-dashboard>
+        }
+        @case ('cocinero') {
+          <app-cook-dashboard></app-cook-dashboard>
+        }
+      }
+    } @else {
+      <router-outlet></router-outlet>
+    }
+  </main>
+  
+  <app-footer></app-footer>
+</div>
+
+@if (isCartVisible() && !currentUser()) {
+  <app-cart (closeCart)="handleToggleCart()"></app-cart>
+}
+
+@if (isLoginVisible()) {
+  <app-login (closeLogin)="handleCloseLogin()"></app-login>
+}
+
+@if (selectedProduct(); as product) {
+  <app-product-detail [product]="product" (closeDetail)="handleCloseDetail()"></app-product-detail>
+}

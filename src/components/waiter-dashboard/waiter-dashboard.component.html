@@ -1,0 +1,101 @@
+<div class="space-y-12 animate-fade-in-up">
+  <div class="text-center">
+    <h2 class="text-4xl font-extrabold text-gray-900">Módulo de Mesero</h2>
+    <p class="text-gray-600 mt-3 max-w-lg mx-auto">Gestión de mesas y pedidos en salón.</p>
+  </div>
+
+  <!-- Table Status Grid -->
+  <section class="bg-white p-6 rounded-2xl shadow-lg">
+    <h3 class="text-2xl font-bold text-gray-800 mb-6 border-l-4 border-orange-500 pl-4">Estado de Mesas</h3>
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      @for(table of tables(); track table.id) {
+        <div (click)="selectTable(table)"
+             class="p-4 rounded-lg text-center cursor-pointer transition-all duration-300 transform hover:-translate-y-1"
+             [class.bg-green-200]="table.status === 'disponible'" [class.hover:bg-green-300]="table.status === 'disponible'"
+             [class.bg-red-200]="table.status === 'ocupada'" [class.hover:bg-red-300]="table.status === 'ocupada'">
+          <p class="font-extrabold text-3xl"
+             [class.text-green-900]="table.status === 'disponible'"
+             [class.text-red-900]="table.status === 'ocupada'">
+            {{ table.number }}
+          </p>
+          <p class="text-sm font-semibold capitalize"
+             [class.text-green-800]="table.status === 'disponible'"
+             [class.text-red-800]="table.status === 'ocupada'">
+            {{ table.status }}
+          </p>
+        </div>
+      }
+    </div>
+  </section>
+
+  <!-- Current selected table order -->
+  @if (selectedTable(); as table) {
+    <section class="bg-white p-6 rounded-2xl shadow-lg">
+      <div class="flex justify-between items-center">
+        <h3 class="text-2xl font-bold text-gray-800 border-l-4 border-orange-500 pl-4">
+          Pedido Mesa #{{ table.number }}
+        </h3>
+        <button (click)="deselectTable()" class="text-gray-500 hover:text-gray-800">
+             <svg class="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+
+      <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Menu for the table -->
+        <div class="max-h-[500px] overflow-y-auto pr-2">
+            <div class="grid grid-cols-2 gap-4">
+                 @for(product of products(); track product.id) {
+                    <div (click)="addToCart(product)" class="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer border hover:border-orange-500 hover:shadow-md transition-all duration-200 p-3 flex flex-col">
+                      <img [src]="product.imageUrl" [alt]="product.name" class="w-full h-24 object-cover rounded">
+                      <div class="pt-2 flex flex-col flex-grow">
+                        <h4 class="font-bold text-sm text-gray-800 flex-grow">{{ product.name }}</h4>
+                        <p class="text-orange-600 font-semibold mt-1 text-sm">{{ product.price | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+                      </div>
+                    </div>
+                 }
+            </div>
+        </div>
+        <!-- Cart for the table -->
+        <div>
+            @if(currentOrderForTable(); as order) {
+              <div class="bg-gray-100 p-4 rounded-lg mb-4">
+                  <h4 class="font-bold text-lg mb-2">Pedido Actual ({{order.status.replace('_', ' ')}})</h4>
+                   <ul class="text-sm text-gray-600 list-disc list-inside">
+                      @for(item of order.items; track item.product.id) {
+                          <li>{{item.product.name}} x {{item.quantity}}</li>
+                      }
+                  </ul>
+              </div>
+            }
+
+            @if (cartItems().length > 0) {
+              <div class="bg-gray-50 p-4 rounded-lg">
+                <h4 class="font-bold text-lg mb-2">Añadir al Pedido</h4>
+                 <div class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                 @for(item of cartItems(); track item.product.id) {
+                    <div class="flex justify-between items-center text-sm">
+                        <div>
+                            <p class="font-semibold text-gray-800">{{item.product.name}} x {{item.quantity}}</p>
+                        </div>
+                        <p class="font-bold text-gray-900">{{ (item.product.price * item.quantity) | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+                    </div>
+                 }
+               </div>
+               <div class="border-t mt-4 pt-4 space-y-3">
+                 <div class="flex justify-between items-center font-bold text-xl">
+                   <span>Total a Añadir:</span>
+                   <span class="text-orange-500">{{ totalPrice() | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+                 </div>
+                 <button (click)="placeOrderForTable(table.id)" class="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600 transition-colors">
+                   Enviar a Cocina
+                 </button>
+               </div>
+            </div>
+            } @else if (!currentOrderForTable()) {
+              <p class="text-center text-gray-500 py-8">Selecciona productos para iniciar el pedido de esta mesa.</p>
+            }
+        </div>
+      </div>
+    </section>
+  }
+</div>

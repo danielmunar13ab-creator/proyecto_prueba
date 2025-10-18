@@ -1,0 +1,93 @@
+<div class="space-y-12 animate-fade-in-up">
+  <div class="text-center">
+    <h2 class="text-4xl font-extrabold text-gray-900">Módulo de Repartidor</h2>
+    <p class="text-gray-600 mt-3 max-w-lg mx-auto">Gestión de entregas a domicilio.</p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+    <!-- Orders to Pick Up -->
+    <section class="bg-white p-5 rounded-2xl shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 border-l-4 border-blue-500 pl-4">Pedidos por Entregar</h3>
+      <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+        @for(order of ordersToPickup(); track order.id) {
+          <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <p class="font-bold text-lg text-blue-900">Pedido #{{order.id}}</p>
+            <div class="text-sm text-gray-700 mt-2 space-y-1">
+              <p><strong>Cliente:</strong> {{order.customerName}}</p>
+              <p><strong>Dirección:</strong> {{order.address}}</p>
+              <p><strong>Teléfono:</strong> {{order.phone}}</p>
+              <p class="font-bold text-right mt-2">{{ order.total | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+            </div>
+            <div class="mt-3 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <button (click)="startDelivery(order.id)" class="w-full bg-blue-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                Iniciar Entrega
+              </button>
+              <a [href]="getGoogleMapsUrl(order.address!)" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center bg-gray-600 text-white py-2 px-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+                  <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.106.383-.223.593-.349.21-.126.428-.26.65-.402l.003-.002a7.712 7.712 0 0 0 2.13-1.666c.345-.306.659-.626.937-.965a7.352 7.352 0 0 0 1.493-2.585c.308-.7.49-1.442.49-2.241C17 5.06 13.866 2 10 2S3 5.06 3 9.25c0 .799.182 1.541.49 2.241.387.966.953 1.85 1.493 2.585.278.339.592.659.937.965a7.712 7.712 0 0 0 2.13 1.666l.003.002c.222.142.44.276.65.402.21.126.407.243.593.349.092.052.185.103.281.14l.018.008.006.003Z" clip-rule="evenodd" />
+                  <path d="M10 11.25a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                </svg>
+                <span>Ver en Mapa</span>
+              </a>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-center text-gray-500 py-8">No hay pedidos listos para recoger.</p>
+        }
+      </div>
+    </section>
+
+    <!-- In Transit Orders -->
+    <section class="bg-white p-5 rounded-2xl shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 border-l-4 border-purple-500 pl-4">Entregas en Curso</h3>
+       <div class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+        @for(order of ordersInTransit(); track order.id) {
+          <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+            <p class="font-bold text-lg text-purple-900">Pedido #{{order.id}}</p>
+            <div class="text-sm text-gray-700 mt-2 space-y-1">
+              <p><strong>Cliente:</strong> {{order.customerName}}</p>
+              <p><strong>Dirección:</strong> {{order.address}}</p>
+              <p><strong>Teléfono:</strong> {{order.phone}}</p>
+              <p class="font-bold text-right mt-2">{{ order.total | currency:'COP':'symbol-narrow':'1.0-0' }}</p>
+            </div>
+             <div class="mt-3 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
+              <button (click)="completeDelivery(order.id)" class="w-full bg-green-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-green-600 transition-colors">
+                Marcar como Completado
+              </button>
+              <a [href]="getGoogleMapsUrl(order.address!)" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-center bg-gray-600 text-white py-2 px-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5 mr-2">
+                  <path fill-rule="evenodd" d="M9.69 18.933l.003.001C9.89 19.02 10 19 10 19s.11.02.308-.066l.002-.001.006-.003.018-.008a5.741 5.741 0 0 0 .281-.14c.186-.106.383-.223.593-.349.21-.126.428-.26.65-.402l.003-.002a7.712 7.712 0 0 0 2.13-1.666c.345-.306.659-.626.937-.965a7.352 7.352 0 0 0 1.493-2.585c.308-.7.49-1.442.49-2.241C17 5.06 13.866 2 10 2S3 5.06 3 9.25c0 .799.182 1.541.49 2.241.387.966.953 1.85 1.493 2.585.278.339.592.659.937.965a7.712 7.712 0 0 0 2.13 1.666l.003.002c.222.142.44.276.65.402.21.126.407.243.593.349.092.052.185.103.281.14l.018.008.006.003Z" clip-rule="evenodd" />
+                  <path d="M10 11.25a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                </svg>
+                <span>Ver en Mapa</span>
+              </a>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-center text-gray-500 py-8">No tienes entregas en curso.</p>
+        }
+      </div>
+    </section>
+
+    <!-- Today's History -->
+    <section class="bg-white p-5 rounded-2xl shadow-lg">
+      <h3 class="text-2xl font-bold text-gray-800 mb-4 border-l-4 border-green-500 pl-4">Historial de Entregas de Hoy</h3>
+      <div class="space-y-3 max-h-[70vh] overflow-y-auto pr-2">
+        @for(order of completedDeliveriesToday(); track order.id) {
+          <div class="bg-green-50 p-3 rounded-lg border border-green-200 text-sm">
+             <div class="flex justify-between items-center">
+              <span class="font-bold text-gray-800">#{{order.id}} - {{order.customerName}}</span>
+              <span class="font-bold text-green-800">{{ order.total | currency:'COP':'symbol-narrow':'1.0-0' }}</span>
+            </div>
+            <div class="flex justify-between items-center text-gray-600 mt-1">
+               <span>{{ order.address }}</span>
+               <span class="text-xs">{{ order.completedAt | date:'shortTime' }}</span>
+            </div>
+          </div>
+        } @empty {
+          <p class="text-center text-gray-500 py-8">No has completado entregas hoy.</p>
+        }
+      </div>
+    </section>
+  </div>
+</div>

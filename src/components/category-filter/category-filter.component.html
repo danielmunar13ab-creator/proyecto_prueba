@@ -1,0 +1,23 @@
+<div class="flex justify-center flex-wrap gap-3 mb-8">
+  <button 
+    (click)="selectCategory(null)"
+    [class.bg-orange-500]="selectedCategory() === null"
+    [class.text-white]="selectedCategory() === null"
+    [class.bg-white]="selectedCategory() !== null"
+    [class.text-gray-700]="selectedCategory() !== null"
+    class="px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+    Todos
+  </button>
+
+  @for (category of categories(); track category) {
+    <button 
+      (click)="selectCategory(category)"
+      [class.bg-orange-500]="selectedCategory() === category"
+      [class.text-white]="selectedCategory() === category"
+      [class.bg-white]="selectedCategory() !== category"
+      [class.text-gray-700]="selectedCategory() !== category"
+      class="px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500">
+      {{ category }}
+    </button>
+  }
+</div>
